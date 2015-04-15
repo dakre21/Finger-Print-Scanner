@@ -15,7 +15,7 @@
 #define pin_length		4
 #define F_CPU 8000000UL // Defines 8Mhz clock
 #define BAUD 9600
-#define BUADRATE F_CPU/16/BAUD-1
+#define BAUDRATE F_CPU/16/BAUD-1
 
 #include <avr/io.h>	// Define io/sram registers
 #include <util/delay.h>	// Define delay routines
@@ -29,7 +29,7 @@ Declaration of the variables used throughout this program
 */
 
 int curr_state = Get_Pin;
-int swipe_event = 0;
+int finger_event = 0;
 int pin_event = 0;
 int swipe_valid = 0;
 int user_pos = 0;
@@ -45,7 +45,7 @@ unsigned char tmp = 0;
 char curr_userID[id_length];
 char curr_userPin[pin_length];
 char final_userPin[pin_length-1];
-unsigned char sequence;
+unsigned char data;
 unsigned char next_bit;
 char check_bit;
 
@@ -300,16 +300,11 @@ ISR(PCINT2_vect){
 
 //Data received on the serial port interrupt -- RX
 ISR(USART_RX_vect){
-	if(curr_state == Validate_User){
+	data = UDR0;
+	PORTC &= ~(1 << 5);	// Turn LED on
+	if(curr_state == Scan_Finger){
 		PORTC &= ~(1 << 5);	// Turn LED on
 	}
-}
-
-void USART_Init(){
-	UBRR0H = (unsigned char)(BUADRATE>>8); // Sets up baudrate
-	UBRR0L = (unsigned char)BUADRATE;
-	UCSR0B = (1<<RXEN0)|(1<<TXEN0);	// Enable receiver and transmitter
-	UCSR0C = (1<<USBS0)|(3<<UCSZ00);	// Set frame format: 8data/2stop bit
 }
 
 int main(void)            // Main Loop
@@ -323,8 +318,8 @@ int main(void)            // Main Loop
 	//PORTB |= (1 << 1);
 	PORTD = 0xF0;
 	
-	USART_Init();
-	
+	//USART_Init();
+	uart_init(BAUDRATE);
 	// Enables pin change interrupt 
 	tmp3 = PCICR;
 	tmp3 = 1 << (PCIE2) | 0 << (PCIE1) | 0 << (PCIE0);
@@ -380,45 +375,75 @@ int main(void)            // Main Loop
 				
 				PORTC &= ~(1 << 5);	// Turn LED on for 5 seconds
 				_delay_ms(1000);
-				swipe_event = 0;
 				curr_state = Scan_Finger;
 				PORTC |= (1 << 5);	// Turn LED off
 			
 			  break;
 			  
-			  case Scan_Finger:
+			case Scan_Finger:
+			  initialize_fps();
 			  lcd_clrscr();	// Initialize LCD with text
 			  lcd_puts("Scan Finger");
 			  _delay_ms(2500);
-			  if(swipe_event == 0){
+			  if(finger_event == 0){
 				  curr_state = Scan_Finger;	// No card swipe
 				  }else{
 				  curr_state = Validate_User;
 			  }
-			  break;
+			break;
 			  
-			  case Validate_User:
+			case Validate_User:
 			  
-			  break;
+			break;
 			  
-			  case Enroll_User:
+			case Enroll_User:
 			  
-			  break;
+			break;
 		 }
 	 }
 }
 
-// Checks fingerprint module for fingerprint match
-/*
-int check_cardID(){
-	for(int count = 0; count < user_length; count++){
-		if(strncmp_P(curr_userID, id[count], id_length) == 0){
-			user_pos = count;	// Used for correct associated pin #
-			swipe_valid = 1;	// Correct swipe => Get Pin #
-			return swipe_valid;
-		}
-	}
-	return 0;
+void initialize_fps(){
+	// Open connection 
+	uart_transmit(0x55);	// Start code 1
+	uart_transmit(0xAA);	// Start code 2
+	uart_transmit(0x01);	// Device ID
+	uart_transmit(0x00);	// Second part of ID
+	uart_transmit(0x00);	// Input parameter byte 1
+	uart_transmit(0x00);	// Input parameter byte 2
+	uart_transmit(0x00);	// Input parameter byte 3
+	uart_transmit(0x00);	// Input parameter byte 4	
+	uart_transmit(0x01);	// Byte 1 of command
+	uart_transmit(0x00);	// Byte 2 of command
+	uart_transmit(0x01);	// Low byte checksum
+	uart_transmit(0x01);	// High byte checksum
+	// Turn FPS LED on
+	_delay_loop_2(100);
+	uart_transmit(0x55);	// Start code 1
+	uart_transmit(0xAA);	// Start code 2
+	uart_transmit(0x01);	// Device ID
+	uart_transmit(0x00);	// Second part of ID
+	uart_transmit(0x00);	// Input parameter byte 1
+	uart_transmit(0x00);	// Input parameter byte 2
+	uart_transmit(0x00);	// Input parameter byte 3
+	uart_transmit(0x00);	// Input parameter byte 4
+	uart_transmit(0x12);	// Byte 1 of command
+	uart_transmit(0x00);	// Byte 2 of command
+	uart_transmit(0x12);	// Low byte checksum
+	uart_transmit(0x01);	// High byte checksum
 }
-*/
 
+void uart_transmit(unsigned char data){
+	cli();
+	//_delay_us(100);
+	uart_putc(data);
+	sei();
+}
+
+/*
+void USART_Init(){
+	UBRR0H = (unsigned char)(BUADRATE>>8); // Sets up baudrate
+	UBRR0L = (unsigned char)BUADRATE;
+	UCSR0B = (1<<RXEN0)|(1<<TXEN0);	// Enable receiver and transmitter
+	UCSR0C = (1<<USBS0)|(1<<UCSZ00);	// Set frame format: 8data/1stop bit
+}*/
