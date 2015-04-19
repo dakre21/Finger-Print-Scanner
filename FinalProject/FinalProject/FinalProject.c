@@ -10,8 +10,6 @@
 #define Scan_Finger		3
 #define Validate_User	4
 #define Enroll_User		5
-#define user_length		28
-#define id_length		10
 #define pin_length		4
 #define F_CPU 8000000UL // Defines 8Mhz clock
 #define BAUD 9600
@@ -36,13 +34,13 @@ int user_pos = 0;
 int counter_pin = 0;
 int counter = 0;
 int flag = 0;
+int count = 0;
 char key;
 char tmp2;
 char tmp3;
 
 unsigned char tmp = 0;
 
-char curr_userID[id_length];
 char curr_userPin[pin_length];
 char final_userPin[pin_length-1];
 unsigned char data;
@@ -300,10 +298,30 @@ ISR(PCINT2_vect){
 
 //Data received on the serial port interrupt -- RX
 ISR(USART_RX_vect){
-	data = UDR0;
-	PORTC &= ~(1 << 5);	// Turn LED on
 	if(curr_state == Scan_Finger){
-		PORTC &= ~(1 << 5);	// Turn LED on
+		data = UDR0;
+		//_delay_ms(100);
+		if((count == 8)&&(data == 0x01)){
+			lcd_clrscr();
+			lcd_puts("Good stuff");
+			_delay_ms(1000);
+		}
+		lcd_clrscr();
+		if(data == 0x31){
+			lcd_clrscr();
+			lcd_puts("response error");
+		}
+		if(data == 0x30){
+			lcd_clrscr();
+			lcd_puts("ack good");
+		}
+		count++; 
+		if(count == 12){
+			count = 0;
+			PORTC &= ~(1 << 5);
+			_delay_ms(5000);
+			PORTC |= (1 << 5);	// Turn LED off -- Sets bit
+		}
 	}
 }
 
@@ -319,7 +337,7 @@ int main(void)            // Main Loop
 	PORTD = 0xF0;
 	
 	//USART_Init();
-	uart_init(BAUDRATE);
+	uart_init(BAUD);
 	// Enables pin change interrupt 
 	tmp3 = PCICR;
 	tmp3 = 1 << (PCIE2) | 0 << (PCIE1) | 0 << (PCIE0);
@@ -373,15 +391,15 @@ int main(void)            // Main Loop
 				lcd_clrscr();
 				lcd_puts("Access Granted");
 				
-				PORTC &= ~(1 << 5);	// Turn LED on for 5 seconds
-				_delay_ms(1000);
+				PORTC &= ~(1 << 5);	// Turn LED on 
+				_delay_ms(2500);
 				curr_state = Scan_Finger;
+				initialize_fps();
+				led_on();
 				PORTC |= (1 << 5);	// Turn LED off
-			
 			  break;
 			  
 			case Scan_Finger:
-			  initialize_fps();
 			  lcd_clrscr();	// Initialize LCD with text
 			  lcd_puts("Scan Finger");
 			  _delay_ms(2500);
@@ -409,33 +427,48 @@ void initialize_fps(){
 	uart_transmit(0xAA);	// Start code 2
 	uart_transmit(0x01);	// Device ID
 	uart_transmit(0x00);	// Second part of ID
-	uart_transmit(0x00);	// Input parameter byte 1
-	uart_transmit(0x00);	// Input parameter byte 2
+	uart_transmit(0x00);	// Input parameter byte 1 (largest byte of param)
+	uart_transmit(0x00);	// Input parameter byte 2 (second largest byte of param)
 	uart_transmit(0x00);	// Input parameter byte 3
 	uart_transmit(0x00);	// Input parameter byte 4	
 	uart_transmit(0x01);	// Byte 1 of command
 	uart_transmit(0x00);	// Byte 2 of command
 	uart_transmit(0x01);	// Low byte checksum
 	uart_transmit(0x01);	// High byte checksum
-	// Turn FPS LED on
-	_delay_loop_2(100);
+	/*
 	uart_transmit(0x55);	// Start code 1
 	uart_transmit(0xAA);	// Start code 2
 	uart_transmit(0x01);	// Device ID
 	uart_transmit(0x00);	// Second part of ID
-	uart_transmit(0x00);	// Input parameter byte 1
+	uart_transmit(0x01);	// Input parameter byte 1 -- LED ON
 	uart_transmit(0x00);	// Input parameter byte 2
 	uart_transmit(0x00);	// Input parameter byte 3
 	uart_transmit(0x00);	// Input parameter byte 4
 	uart_transmit(0x12);	// Byte 1 of command
 	uart_transmit(0x00);	// Byte 2 of command
-	uart_transmit(0x12);	// Low byte checksum
+	uart_transmit(0x13);	// Low byte checksum
+	uart_transmit(0x01);	// High byte checksum*/
+}
+
+// Turn FPS LED on
+void led_on(){
+	uart_transmit(0x55);	// Start code 1
+	uart_transmit(0xAA);	// Start code 2
+	uart_transmit(0x01);	// Device ID
+	uart_transmit(0x00);	// Second part of ID
+	uart_transmit(0x01);	// Input parameter byte 1 -- LED ON
+	uart_transmit(0x00);	// Input parameter byte 2
+	uart_transmit(0x00);	// Input parameter byte 3
+	uart_transmit(0x00);	// Input parameter byte 4
+	uart_transmit(0x12);	// Byte 1 of command
+	uart_transmit(0x00);	// Byte 2 of command
+	uart_transmit(0x13);	// Low byte checksum
 	uart_transmit(0x01);	// High byte checksum
 }
 
 void uart_transmit(unsigned char data){
 	cli();
-	//_delay_us(100);
+	_delay_ms(1);
 	uart_putc(data);
 	sei();
 }
