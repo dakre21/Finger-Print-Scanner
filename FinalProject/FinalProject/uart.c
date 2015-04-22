@@ -314,9 +314,9 @@ void uart_init(unsigned int baudrate)
     /* Enable USART receiver and transmitter and receive complete interrupt */
     UART0_CONTROL = _BV(RXCIE0)|(1<<RXEN0)|(1<<TXEN0);  
       
-    /* Set frame format: asynchronous, 8data, no parity, 2stop bit */
-   // UCSR0C |= (3<<UCSZ00)|(1<<USBS0);
-    UCSR0C |= (1<<UCSZ01)|(1<<UCSZ00)|(0<<USBS0);	// FPS 8 data, no parity, 1 stop bit
+    /* Set frame format: asynchronous, 8data, no parity, 1stop bit */
+    UCSR0C |= (3<<UCSZ00);	// 1 stop bit
+    // UCSR0C |= (1<<UCSZ01)|(1<<UCSZ00)|(0<<USBS0);	// FPS 8 data, no parity, 1 stop bit
   
 #elif defined ( ATMEGA_UART )
     /* set baud rate */
