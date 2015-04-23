@@ -33,11 +33,8 @@ int swipe_valid = 0;
 int user_pos = 0;
 int counter_pin = 0;
 int counter = 0;
-int count_finger = 0;
 int flag = 0;
 int count = 0;
-int enroll_id = 0;
-int checksumLow = 0;
 char key;
 char tmp2;
 char tmp3;
@@ -301,54 +298,34 @@ ISR(PCINT2_vect){
 }
 
 //Data received on the serial port interrupt -- RX
-
 ISR(USART_RX_vect){
+	if(curr_state == Scan_Finger){
 		data = UDR0;
 		//_delay_ms(100);
-		if((curr_state == Scan_Finger)&&(data != 0x30)){
-			if((data != 0)&&(count == 0)){
-				enroll_id = data;
-				data++;
-			}else if(data == 0){
-				enroll_id = data;
-			}
-			count++;
+		if((count == 5)&&(data == 0x00)){
 			lcd_clrscr();
 			lcd_puts("test");
 			_delay_ms(1000);
-			lcd_clrscr();
 		}
-		
-		if((curr_state == Scan_Finger)&&(data == 0x00)&&(count_finger == 0)){
-			finger_event = 1;
-			lcd_clrscr();
-			lcd_puts("finger press");
-			_delay_ms(1000);
-			lcd_clrscr();
-		}
-		count_finger++;
-		
 		lcd_clrscr();
 		if(data == 0x31){
 			lcd_clrscr();
 			lcd_puts("response error");
 			_delay_ms(1000);
-			finger_event = 2;
 		}
 		if(data == 0x30){
 			lcd_clrscr();
 			lcd_puts("ack good");
 			_delay_ms(1000);
-			count++;
 		}
-		/*count++; 
+		count++; 
 		if(count == 12){
 			count = 0;
 			PORTC &= ~(1 << 5);
 			_delay_ms(1000);
 			PORTC |= (1 << 5);	// Turn LED off -- Sets bit
-		}*/
-	
+		}
+	}
 }
 
 int main(void)            // Main Loop
@@ -369,20 +346,16 @@ int main(void)            // Main Loop
 	tmp3 = PCMSK2;
 	tmp3 = 1 << (PCINT23) | 1 << (PCINT22) | 1 << (PCINT21) | 1 << (PCINT20) | 0 << (PCINT19) | 0 << (PCINT18) | 0 << (PCINT17) | 0 << (PCINT16);
 	PCMSK2 = tmp3;
-	sei();                // Enables global interrupts
+	
 	lcd_init(LCD_DISP_ON);
-	uart_init(BAUDRATE);
-	//uart_init(51);
+	//uart_init(BAUDRATE);
+	uart_init(51);
 	//USART_Init();
-	_delay_ms(500);
+	sei();                // Enables global interrupts
+	_delay_ms(10);
 	initialize_fps();
-	_delay_ms(500);
+	_delay_ms(50);
 	led_on();
-	_delay_ms(500);
-	/*for(int i = 0; i < 25; i++){
-		_delay_ms(50);
-		led_on();
-	}*/
 	_delay_ms(50);
 	 while(1)
 	 {
@@ -429,12 +402,9 @@ int main(void)            // Main Loop
 				curr_state = Scan_Finger;
 			
 				PORTC |= (1 << 5);	// Turn LED off
-				getEnrollCount();
-				_delay_ms(100);
 			  break;
 			  
 			case Scan_Finger:
-			  fingerPressed();
 			  lcd_clrscr();	// Initialize LCD with text
 			  lcd_puts("Scan Finger");
 			  _delay_ms(2500);
@@ -448,7 +418,7 @@ int main(void)            // Main Loop
 			break;
 			  
 			case Enroll_User:
-			  enrollStart();
+			  
 			break;
 			
 			case EXIT:
@@ -498,52 +468,6 @@ void led_on(){
 	uart_transmit(0x01);	// High byte checksum
 	
 	//uart_receive();
-}
-
-void getEnrollCount(){
-	uart_transmit(0x55);	// Start code 1
-	uart_transmit(0xAA);	// Start code 2
-	uart_transmit(0x01);	// Device ID
-	uart_transmit(0x00);	// Second part of ID
-	uart_transmit(0x01);	// Input parameter byte 1 
-	uart_transmit(0x00);	// Input parameter byte 2
-	uart_transmit(0x00);	// Input parameter byte 3
-	uart_transmit(0x00);	// Input parameter byte 4
-	uart_transmit(0x20);	// Byte 1 of command
-	uart_transmit(0x00);	// Byte 2 of command
-	uart_transmit(0x21);	// Low byte checksum
-	uart_transmit(0x01);	// High byte checksum
-}
-
-void fingerPressed(){
-	uart_transmit(0x55);	// Start code 1
-	uart_transmit(0xAA);	// Start code 2
-	uart_transmit(0x01);	// Device ID
-	uart_transmit(0x00);	// Second part of ID
-	uart_transmit(0x01);	// Input parameter byte 1
-	uart_transmit(0x00);	// Input parameter byte 2
-	uart_transmit(0x00);	// Input parameter byte 3
-	uart_transmit(0x00);	// Input parameter byte 4
-	uart_transmit(0x26);	// Byte 1 of command
-	uart_transmit(0x00);	// Byte 2 of command
-	uart_transmit(0x26);	// Low byte checksum
-	uart_transmit(0x01);	// High byte checksum
-}
-
-void enrollStart(){
-	checksumLow = enroll_id + 22;
-	uart_transmit(0x55);	// Start code 1
-	uart_transmit(0xAA);	// Start code 2
-	uart_transmit(0x01);	// Device ID
-	uart_transmit(0x00);	// Second part of ID
-	uart_transmit(enroll_id);	// Input parameter byte 1
-	uart_transmit(0x00);	// Input parameter byte 2
-	uart_transmit(0x00);	// Input parameter byte 3
-	uart_transmit(0x00);	// Input parameter byte 4
-	uart_transmit(0x22);	// Byte 1 of command
-	uart_transmit(0x00);	// Byte 2 of command
-	uart_transmit(checksumLow);	// Low byte checksum
-	uart_transmit(0x01);	// High byte checksum
 }
 
 void uart_transmit(unsigned char data){
