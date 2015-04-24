@@ -304,31 +304,24 @@ ISR(PCINT2_vect){
 
 ISR(USART_RX_vect){
 		data = UDR0;
-		//_delay_ms(100);
-		if((curr_state == Scan_Finger)&&(data != 0x30)){
-			if((data != 0)&&(count == 0)){
+		
+		if((curr_state == Check_Pin)&&(count == 4)){
+			if(data != 0){
 				enroll_id = data;
-				data++;
+				enroll_id++;
 			}else if(data == 0){
 				enroll_id = data;
 			}
-			count++;
 			lcd_clrscr();
-			lcd_puts("test");
+			lcd_puts("get enroll count");
 			_delay_ms(1000);
-			lcd_clrscr();
 		}
-		
-		if((curr_state == Scan_Finger)&&(data == 0x00)&&(count_finger == 0)){
+		if((curr_state == Scan_Finger)&&(data == 0x01)){
 			finger_event = 1;
 			lcd_clrscr();
-			lcd_puts("finger press");
+			lcd_puts("finger pressed");
 			_delay_ms(1000);
-			lcd_clrscr();
 		}
-		count_finger++;
-		
-		lcd_clrscr();
 		if(data == 0x31){
 			lcd_clrscr();
 			lcd_puts("response error");
@@ -339,16 +332,23 @@ ISR(USART_RX_vect){
 			lcd_clrscr();
 			lcd_puts("ack good");
 			_delay_ms(1000);
-			count++;
 		}
-		/*count++; 
-		if(count == 12){
-			count = 0;
-			PORTC &= ~(1 << 5);
-			_delay_ms(1000);
-			PORTC |= (1 << 5);	// Turn LED off -- Sets bit
+		lcd_clrscr();
+		
+		if(curr_state == Check_Pin){
+			count++;
+			if(count > 11){
+				count == 0;
+			}
+		}
+		/*
+		if(curr_state == Get_Pin){
+			count_finger++;
+			if(count_finger > 11){
+				count_finger = 0;
+			}
 		}*/
-	
+		_delay_ms(10);
 }
 
 int main(void)            // Main Loop
@@ -374,16 +374,12 @@ int main(void)            // Main Loop
 	uart_init(BAUDRATE);
 	//uart_init(51);
 	//USART_Init();
-	_delay_ms(500);
+	_delay_ms(100);
 	initialize_fps();
-	_delay_ms(500);
+	_delay_ms(100);
 	led_on();
-	_delay_ms(500);
-	/*for(int i = 0; i < 25; i++){
-		_delay_ms(50);
-		led_on();
-	}*/
-	_delay_ms(50);
+	_delay_ms(100);
+	
 	 while(1)
 	 {
 		 switch(curr_state){
@@ -402,6 +398,8 @@ int main(void)            // Main Loop
 			 break;
 			 
 			 case Check_Pin:
+				getEnrollCount();
+				_delay_ms(100);
 				if(strncmp_P(final_userPin, pin, pin_length) == 0){
 					curr_state = Authorize;
 				}else{
@@ -429,19 +427,19 @@ int main(void)            // Main Loop
 				curr_state = Scan_Finger;
 			
 				PORTC |= (1 << 5);	// Turn LED off
-				getEnrollCount();
-				_delay_ms(100);
-			  break;
+			 break;
 			  
 			case Scan_Finger:
 			  fingerPressed();
+			  _delay_ms(100);
 			  lcd_clrscr();	// Initialize LCD with text
 			  lcd_puts("Scan Finger");
 			  _delay_ms(2500);
+			  count_finger = 0;
 			  if(finger_event == 0){
-				  curr_state = Scan_Finger;	// No card swipe
+				  curr_state = Scan_Finger;	// No finger pressed
 				  }else if (finger_event == 1){
-				  curr_state = Enroll_User;
+					 curr_state = Enroll_User;
 				 }else{
 					 curr_state = EXIT;
 				 }
@@ -526,7 +524,7 @@ void fingerPressed(){
 	uart_transmit(0x00);	// Input parameter byte 4
 	uart_transmit(0x26);	// Byte 1 of command
 	uart_transmit(0x00);	// Byte 2 of command
-	uart_transmit(0x26);	// Low byte checksum
+	uart_transmit(0x27);	// Low byte checksum
 	uart_transmit(0x01);	// High byte checksum
 }
 

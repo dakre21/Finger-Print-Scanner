@@ -231,7 +231,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0xb20
+.text           0x00000000      0xb00
  *(.vectors)
  .vectors       0x00000000       0x34 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr4/crtm88pa.o
                 0x00000000                __vector_default
@@ -320,70 +320,70 @@ END GROUP
                 0x00000070      0x354 FinalProject.o
                 0x00000070                __vector_5
  .text.__vector_18
-                0x000003c4      0x178 FinalProject.o
+                0x000003c4      0x150 FinalProject.o
                 0x000003c4                __vector_18
  .text.uart_transmit
-                0x0000053c        0x8 FinalProject.o
-                0x0000053c                uart_transmit
+                0x00000514        0x8 FinalProject.o
+                0x00000514                uart_transmit
  .text.initialize_fps
-                0x00000544       0x4a FinalProject.o
-                0x00000544                initialize_fps
- .text.led_on   0x0000058e       0x4a FinalProject.o
-                0x0000058e                led_on
+                0x0000051c       0x4a FinalProject.o
+                0x0000051c                initialize_fps
+ .text.led_on   0x00000566       0x4a FinalProject.o
+                0x00000566                led_on
  .text.getEnrollCount
-                0x000005d8       0x4a FinalProject.o
-                0x000005d8                getEnrollCount
+                0x000005b0       0x4a FinalProject.o
+                0x000005b0                getEnrollCount
  .text.fingerPressed
-                0x00000622       0x4a FinalProject.o
-                0x00000622                fingerPressed
+                0x000005fa       0x4a FinalProject.o
+                0x000005fa                fingerPressed
  .text.enrollStart
-                0x0000066c       0x64 FinalProject.o
-                0x0000066c                enrollStart
- .text.main     0x000006d0      0x238 FinalProject.o
-                0x000006d0                main
+                0x00000644       0x64 FinalProject.o
+                0x00000644                enrollStart
+ .text.main     0x000006a8      0x240 FinalProject.o
+                0x000006a8                main
  .text.toggle_e
-                0x00000908        0x8 lcd.o
+                0x000008e8        0x8 lcd.o
  .text.lcd_write
-                0x00000910       0x3a lcd.o
+                0x000008f0       0x3a lcd.o
  .text.lcd_read
-                0x0000094a       0x2e lcd.o
+                0x0000092a       0x2e lcd.o
  .text.lcd_waitbusy
-                0x00000978       0x12 lcd.o
+                0x00000958       0x12 lcd.o
  .text.lcd_command
-                0x0000098a       0x10 lcd.o
-                0x0000098a                lcd_command
+                0x0000096a       0x10 lcd.o
+                0x0000096a                lcd_command
  .text.lcd_clrscr
-                0x0000099a        0x6 lcd.o
-                0x0000099a                lcd_clrscr
+                0x0000097a        0x6 lcd.o
+                0x0000097a                lcd_clrscr
  .text.lcd_home
-                0x000009a0        0x6 lcd.o
-                0x000009a0                lcd_home
+                0x00000980        0x6 lcd.o
+                0x00000980                lcd_home
  .text.lcd_putc
-                0x000009a6       0x24 lcd.o
-                0x000009a6                lcd_putc
+                0x00000986       0x24 lcd.o
+                0x00000986                lcd_putc
  .text.lcd_puts
-                0x000009ca       0x1e lcd.o
-                0x000009ca                lcd_puts
+                0x000009aa       0x1e lcd.o
+                0x000009aa                lcd_puts
  .text.lcd_init
-                0x000009e8       0x64 lcd.o
-                0x000009e8                lcd_init
+                0x000009c8       0x64 lcd.o
+                0x000009c8                lcd_init
  .text.__vector_19
-                0x00000a4c       0x54 uart.o
-                0x00000a4c                __vector_19
+                0x00000a2c       0x54 uart.o
+                0x00000a2c                __vector_19
  .text.uart_init
-                0x00000aa0       0x36 uart.o
-                0x00000aa0                uart_init
+                0x00000a80       0x36 uart.o
+                0x00000a80                uart_init
  .text.uart_putc
-                0x00000ad6       0x2a uart.o
-                0x00000ad6                uart_putc
+                0x00000ab6       0x2a uart.o
+                0x00000ab6                uart_putc
  .text.avr-libc
-                0x00000b00       0x1c c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr4\libc.a(strncmp_P.o)
-                0x00000b00                strncmp_P
-                0x00000b1c                . = ALIGN (0x2)
+                0x00000ae0       0x1c c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr4\libc.a(strncmp_P.o)
+                0x00000ae0                strncmp_P
+                0x00000afc                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000b1c        0x0 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
-                0x00000b1c                _exit
-                0x00000b1c                exit
+ .fini9         0x00000afc        0x0 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000afc                _exit
+                0x00000afc                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -402,79 +402,79 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000b1c        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+ .fini0         0x00000afc        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000b20                _etext = .
+                0x00000b00                _etext = .
 
-.data           0x00800100       0x74 load address 0x00000b20
+.data           0x00800100       0x82 load address 0x00000b00
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
-                0x00800100       0x74 FinalProject.o
+                0x00800100       0x82 FinalProject.o
  *(.gnu.linkonce.d*)
-                0x00800174                . = ALIGN (0x2)
-                0x00800174                _edata = .
-                0x00800174                PROVIDE (__data_end, .)
+                0x00800182                . = ALIGN (0x2)
+                0x00800182                _edata = .
+                0x00800182                PROVIDE (__data_end, .)
 
-.bss            0x00800174       0x41
-                0x00800174                PROVIDE (__bss_start, .)
+.bss            0x00800182       0x41
+                0x00800182                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
  .bss.checksumLow
-                0x00800174        0x2 FinalProject.o
-                0x00800174                checksumLow
- .bss.enroll_id
-                0x00800176        0x2 FinalProject.o
-                0x00800176                enroll_id
- .bss.count     0x00800178        0x2 FinalProject.o
-                0x00800178                count
- .bss.flag      0x0080017a        0x2 FinalProject.o
-                0x0080017a                flag
- .bss.count_finger
-                0x0080017c        0x2 FinalProject.o
-                0x0080017c                count_finger
- .bss.pin_event
-                0x0080017e        0x2 FinalProject.o
-                0x0080017e                pin_event
- .bss.finger_event
-                0x00800180        0x2 FinalProject.o
-                0x00800180                finger_event
- .bss.curr_state
                 0x00800182        0x2 FinalProject.o
-                0x00800182                curr_state
+                0x00800182                checksumLow
+ .bss.enroll_id
+                0x00800184        0x2 FinalProject.o
+                0x00800184                enroll_id
+ .bss.count     0x00800186        0x2 FinalProject.o
+                0x00800186                count
+ .bss.flag      0x00800188        0x2 FinalProject.o
+                0x00800188                flag
+ .bss.count_finger
+                0x0080018a        0x2 FinalProject.o
+                0x0080018a                count_finger
+ .bss.pin_event
+                0x0080018c        0x2 FinalProject.o
+                0x0080018c                pin_event
+ .bss.finger_event
+                0x0080018e        0x2 FinalProject.o
+                0x0080018e                finger_event
+ .bss.curr_state
+                0x00800190        0x2 FinalProject.o
+                0x00800190                curr_state
  .bss.UART_RxTail
-                0x00800184        0x1 uart.o
+                0x00800192        0x1 uart.o
  .bss.UART_RxHead
-                0x00800185        0x1 uart.o
+                0x00800193        0x1 uart.o
  .bss.UART_TxTail
-                0x00800186        0x1 uart.o
+                0x00800194        0x1 uart.o
  .bss.UART_TxHead
-                0x00800187        0x1 uart.o
+                0x00800195        0x1 uart.o
  .bss.UART_TxBuf
-                0x00800188       0x20 uart.o
+                0x00800196       0x20 uart.o
  *(COMMON)
- COMMON         0x008001a8        0xd FinalProject.o
-                0x008001a8                final_userPin
-                0x008001ab                check_bit
-                0x008001ac                tmp2
-                0x008001ad                tmp3
-                0x008001ae                data
-                0x008001af                key
-                0x008001b0                next_bit
-                0x008001b1                curr_userPin
-                0x008001b5                PROVIDE (__bss_end, .)
-                0x00000b20                __data_load_start = LOADADDR (.data)
-                0x00000b94                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x008001b6        0xd FinalProject.o
+                0x008001b6                final_userPin
+                0x008001b9                check_bit
+                0x008001ba                tmp2
+                0x008001bb                tmp3
+                0x008001bc                data
+                0x008001bd                key
+                0x008001be                next_bit
+                0x008001bf                curr_userPin
+                0x008001c3                PROVIDE (__bss_end, .)
+                0x00000b00                __data_load_start = LOADADDR (.data)
+                0x00000b82                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x008001b5        0x0
-                0x008001b5                PROVIDE (__noinit_start, .)
+.noinit         0x008001c3        0x0
+                0x008001c3                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x008001b5                PROVIDE (__noinit_end, .)
-                0x008001b5                _end = .
-                0x008001b5                PROVIDE (__heap_start, .)
+                0x008001c3                PROVIDE (__noinit_end, .)
+                0x008001c3                _end = .
+                0x008001c3                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -547,11 +547,11 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1db8
+.debug_info     0x00000000     0x1de4
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000     0x1389 FinalProject.o
- .debug_info    0x00001389      0x77e lcd.o
- .debug_info    0x00001b07      0x2b1 uart.o
+ .debug_info    0x00000000     0x13b5 FinalProject.o
+ .debug_info    0x000013b5      0x77e lcd.o
+ .debug_info    0x00001b33      0x2b1 uart.o
 
 .debug_abbrev   0x00000000      0x65e
  *(.debug_abbrev)
@@ -559,11 +559,11 @@ END GROUP
  .debug_abbrev  0x00000270      0x28d lcd.o
  .debug_abbrev  0x000004fd      0x161 uart.o
 
-.debug_line     0x00000000      0x8fb
+.debug_line     0x00000000      0x906
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x509 FinalProject.o
- .debug_line    0x00000509      0x2b5 lcd.o
- .debug_line    0x000007be      0x13d uart.o
+ .debug_line    0x00000000      0x514 FinalProject.o
+ .debug_line    0x00000514      0x2b5 lcd.o
+ .debug_line    0x000007c9      0x13d uart.o
 
 .debug_frame    0x00000000      0x328
  *(.debug_frame)
@@ -580,11 +580,11 @@ END GROUP
  .debug_str     0x000003ca       0xb6 uart.o
                                 0x250 (size before relaxing)
 
-.debug_loc      0x00000000      0xcc6
+.debug_loc      0x00000000      0xd0e
  *(.debug_loc)
- .debug_loc     0x00000000      0x5d8 FinalProject.o
- .debug_loc     0x000005d8      0x49f lcd.o
- .debug_loc     0x00000a77      0x24f uart.o
+ .debug_loc     0x00000000      0x620 FinalProject.o
+ .debug_loc     0x00000620      0x49f lcd.o
+ .debug_loc     0x00000abf      0x24f uart.o
 
 .debug_macinfo
  *(.debug_macinfo)
